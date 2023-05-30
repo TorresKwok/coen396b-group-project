@@ -6,13 +6,20 @@ import Filter from "./filter"
 import ca_data from "../data/CA.json"
 import tx_data from "../data/TX.json"
 import SNAP_data from "../data/SNAP.json"
+import merged_data from "../data/merged_data.json"
 
 import styles from "./styles.module.css"
+import MapModal from "./MapModal"
+
 
 function USMap() {
 	const [selectState, setSelectState] = useState("Select State")
 	const [selectDate, setSelectDate] = useState({ year: 2019, month: 2 })
 	const [progress, setProgress] = useState("")
+	const [modalOpen, setModalOpen] = useState(false)
+	const [modalData, setModalData] = useState({})
+	const [county, setCounty] = useState("")
+
 
 	const stateChangeHandler = value => {
 		if (value.includes("-")) {
@@ -128,6 +135,7 @@ function USMap() {
 				// .attr("stroke-width", "0.2px")
 				.on("mouseover", handleMouseOver)
 				.on("mouseout", handleMouseOut)
+				.on("click", handleMouseClick)
 
 			function handleSNAPData(d) {
 				for (let i = 0; i < filter_SNAP_data.length; i++) {
@@ -139,6 +147,21 @@ function USMap() {
 					}
 				}
 				return "Grey"
+			}
+
+			function filterCactusData (county) {
+				let newData = merged_data.filter(d => d.county === county)
+				console.log(newData)
+				setModalData(newData)
+			}
+
+			function handleMouseClick(d, event) {
+				// console.log(d)
+				// console.log('event', event)
+				setCounty(event.properties.NAME)
+				filterCactusData(event.properties.NAME)
+				setModalOpen(true)
+
 			}
 
 			// function handleGetBachelors(d) {
@@ -195,8 +218,8 @@ function USMap() {
 					.style("left", event.pageX + 10 + "px")
 					.html(
 						"<center> " +
-							handleGetLocation(d.id || +d.properties.GEOID) +
-							" </center>",
+						handleGetLocation(d.id || +d.properties.GEOID) +
+						" </center>",
 					)
 			}
 
@@ -223,9 +246,8 @@ function USMap() {
 				)
 
 				if (!node) return "No Data Available"
-				return `${node.County.substring(0, node.County.length - 7)}, ${
-					node.State === "California" ? "CA" : "TX"
-				}<br>Applications: ${node.SNAP_Applications}`
+				return `${node.County.substring(0, node.County.length - 7)}, ${node.State === "California" ? "CA" : "TX"
+					}<br>Applications: ${node.SNAP_Applications}`
 			}
 
 			function handleMouseOut(event, d) {
@@ -304,6 +326,7 @@ function USMap() {
 			// 	.attr("class", d => handleGetColor(d))
 
 			// legend.append("g").call(xAxis)
+
 		}
 		render()
 	}, [selectState, selectDate, progress])
@@ -341,9 +364,11 @@ function USMap() {
 					/>
 				</div>
 			</div>
-
 			<div id='theChart'></div>
 			<div id='theLegend'></div>
+			<div>
+				{modalOpen && <MapModal setIsOpen={() => setModalOpen(false)} modalData={modalData} county={county}/>}
+			</div>
 		</div>
 	)
 }
