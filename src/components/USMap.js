@@ -11,7 +11,6 @@ import merged_data from "../data/merged_data.json"
 import styles from "./styles.module.css"
 import MapModal from "./MapModal"
 
-
 function USMap() {
 	const [selectState, setSelectState] = useState("Select State")
 	const [selectDate, setSelectDate] = useState({ year: 2019, month: 2 })
@@ -19,7 +18,6 @@ function USMap() {
 	const [modalOpen, setModalOpen] = useState(false)
 	const [modalData, setModalData] = useState({})
 	const [county, setCounty] = useState("")
-
 
 	const stateChangeHandler = value => {
 		if (value.includes("-")) {
@@ -129,7 +127,7 @@ function USMap() {
 				.attr("class", d => {
 					// console.log(d)
 					// return handleGetBachelors(d)
-					return handleSNAPData(d)
+					return handleCountyData(d)
 				})
 				// .attr("stroke", "#ddd")
 				// .attr("stroke-width", "0.2px")
@@ -137,7 +135,7 @@ function USMap() {
 				.on("mouseout", handleMouseOut)
 				.on("click", handleMouseClick)
 
-			function handleSNAPData(d) {
+			function handleCountyData(d) {
 				for (let i = 0; i < filter_SNAP_data.length; i++) {
 					if (
 						d.id === +filter_SNAP_data[i].fipsValue ||
@@ -149,7 +147,7 @@ function USMap() {
 				return "Grey"
 			}
 
-			function filterCactusData (county) {
+			function filterCactusData(county) {
 				let newData = merged_data.filter(d => d.county === county)
 				console.log(newData)
 				setModalData(newData)
@@ -161,7 +159,6 @@ function USMap() {
 				setCounty(event.properties.NAME)
 				filterCactusData(event.properties.NAME)
 				setModalOpen(true)
-
 			}
 
 			// function handleGetBachelors(d) {
@@ -218,8 +215,8 @@ function USMap() {
 					.style("left", event.pageX + 10 + "px")
 					.html(
 						"<center> " +
-						handleGetLocation(d.id || +d.properties.GEOID) +
-						" </center>",
+							handleGetLocation(d.id || +d.properties.GEOID) +
+							" </center>",
 					)
 			}
 
@@ -246,8 +243,9 @@ function USMap() {
 				)
 
 				if (!node) return "No Data Available"
-				return `${node.County.substring(0, node.County.length - 7)}, ${node.State === "California" ? "CA" : "TX"
-					}<br>Applications: ${node.SNAP_Applications}`
+				return `${node.County.substring(0, node.County.length - 7)}, ${
+					node.State === "California" ? "CA" : "TX"
+				}<br>Applications: ${node.SNAP_Applications}`
 			}
 
 			function handleMouseOut(event, d) {
@@ -326,15 +324,14 @@ function USMap() {
 			// 	.attr("class", d => handleGetColor(d))
 
 			// legend.append("g").call(xAxis)
-
 		}
 		render()
 	}, [selectState, selectDate, progress])
 
 	return (
-		<div id='container'>
-			<h1 id='title'>United States Specimen Distribution Dashboard</h1>
-			<div id='description'>
+		<div id="container">
+			<h1 id="title">United States Specimen Distribution Dashboard</h1>
+			<div id="description">
 				Plant Specimen collected by SEINet Dataset (1960-2020)
 			</div>
 			<div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -348,26 +345,32 @@ function USMap() {
 					<Filter
 						title={"Pick a Month"}
 						datas={{ min: "2019-02", max: "2021-12" }}
-						id='month'
+						id="month"
 						stateChange={stateChangeHandler}
 						className={styles.filter}
-						type='month'
+						type="month"
 					/>
 
 					<Filter
 						title={"Select State"}
 						datas={["United States", "California", "Texas"]}
-						id='state'
+						id="state"
 						stateChange={stateChangeHandler}
 						className={styles.filter}
-						type='select'
+						type="select"
 					/>
 				</div>
 			</div>
-			<div id='theChart'></div>
-			<div id='theLegend'></div>
+			<div id="theChart"></div>
+			<div id="theLegend"></div>
 			<div>
-				{modalOpen && <MapModal setIsOpen={() => setModalOpen(false)} modalData={modalData} county={county}/>}
+				{modalOpen && (
+					<MapModal
+						setIsOpen={() => setModalOpen(false)}
+						modalData={modalData}
+						county={county}
+					/>
+				)}
 			</div>
 		</div>
 	)
