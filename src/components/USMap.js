@@ -127,7 +127,7 @@ function USMap() {
 				.attr("class", d => {
 					// console.log(d)
 					// return handleGetBachelors(d)
-					return handleCountyData(d)
+					return handleCountyColor(d)
 				})
 				// .attr("stroke", "#ddd")
 				// .attr("stroke-width", "0.2px")
@@ -135,7 +135,7 @@ function USMap() {
 				.on("mouseout", handleMouseOut)
 				.on("click", handleMouseClick)
 
-			function handleCountyData(d) {
+			function handleCountyColor(d) {
 				for (let i = 0; i < filter_SNAP_data.length; i++) {
 					if (
 						d.id === +filter_SNAP_data[i].fipsValue ||
