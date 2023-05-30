@@ -6,9 +6,10 @@ import { useState } from 'react'
 
 const ListItem = ({ item }) => {
     return (
-        <>
-            <li>{item.family}</li>
-        </>
+        <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+            <li><a href={item.references}>{item.scientificName}</a></li>
+            <img src={item.thumbnailAccessURI} alt='plantPicture'/>
+        </div>
     )
 }
 
