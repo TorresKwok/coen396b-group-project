@@ -161,7 +161,6 @@ function USMap() {
 				setCounty(event.properties.NAME)
 				filterCactusData(event.properties.NAME)
 				setModalOpen(true)
-
 			}
 
 			// function handleGetBachelors(d) {
