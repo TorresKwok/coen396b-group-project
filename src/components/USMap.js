@@ -7,6 +7,7 @@ import ca_data from "../data/CA.json"
 import tx_data from "../data/TX.json"
 import SNAP_data from "../data/SNAP.json"
 import merged_data from "../data/merged_data.json"
+import all_data from '../data/georef-united-states-of-america-county.json'
 
 import styles from "./styles.module.css"
 import MapModal from "./MapModal"
@@ -39,13 +40,13 @@ function USMap() {
 				selectState === "Select State" ||
 				selectState === "United States"
 			) {
-				const mapData = await fetch(
-					"https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json",
-				).then(res => res.json())
+				// const mapData = await fetch(
+				// 	"https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json",
+				// ).then(res => res.json())
 
 				renderData = topojson.feature(
-					mapData,
-					mapData.objects.counties,
+					all_data,
+					all_data.objects.counties,
 				).features
 			}
 
@@ -153,9 +154,16 @@ function USMap() {
 				setModalData(newData)
 			}
 
+			function getCountyName(id){
+				return 
+			}
+
 			function handleMouseClick(d, event) {
-				// console.log(d)
-				// console.log('event', event)
+				console.log(d)
+				console.log('event', event)
+				if(!event.properties.NAME){
+
+				}
 				setCounty(event.properties.NAME)
 				filterCactusData(event.properties.NAME)
 				setModalOpen(true)
@@ -242,10 +250,13 @@ function USMap() {
 					data => +data.fipsValue === x,
 				)
 
+
 				if (!node) return "No Data Available"
+				const cactiData = merged_data.filter(d => d.county === (node.County).replace(" County", ""))
+				console.log(Object.entries(cactiData))
 				return `${node.County.substring(0, node.County.length - 7)}, ${
 					node.State === "California" ? "CA" : "TX"
-				}<br>Applications: ${node.SNAP_Applications}`
+				}<br>Samples: ${Object.entries(cactiData).length}`
 			}
 
 			function handleMouseOut(event, d) {
