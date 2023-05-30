@@ -5,9 +5,9 @@ import * as topojson from "topojson"
 import Filter from "./filter"
 import ca_data from "../data/CA.json"
 import tx_data from "../data/TX.json"
+import az_data from "../data/AZ.json"
 import SNAP_data from "../data/SNAP.json"
 import merged_data from "../data/merged_data.json"
-import all_data from '../data/georef-united-states-of-america-county.json'
 
 import styles from "./styles.module.css"
 import MapModal from "./MapModal"
@@ -40,13 +40,13 @@ function USMap() {
 				selectState === "Select State" ||
 				selectState === "United States"
 			) {
-				// const mapData = await fetch(
-				// 	"https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json",
-				// ).then(res => res.json())
-
+				const mapData = await fetch(
+					"https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json",
+				).then(res => res.json())
+					console.log(mapData)
 				renderData = topojson.feature(
-					all_data,
-					all_data.objects.counties,
+					mapData,
+					mapData.objects.counties,
 				).features
 			}
 
@@ -63,6 +63,13 @@ function USMap() {
 				renderData = topojson.feature(
 					tx_data,
 					tx_data.objects.cb_2015_texas_county_20m,
+				).features
+			}
+
+			if (selectState === "Arizona") {
+				renderData = topojson.feature(
+					az_data,
+					az_data.objects.cb_2015_arizona_county_20m,
 				).features
 			}
 
@@ -364,7 +371,7 @@ function USMap() {
 
 					<Filter
 						title={"Select State"}
-						datas={["United States", "California", "Texas"]}
+						datas={["United States", "California", "Texas", "Arizona"]}
 						id="state"
 						stateChange={stateChangeHandler}
 						className={styles.filter}
