@@ -12,18 +12,26 @@ import merged_data from "../data/merged_data.json"
 import styles from "./styles.module.css"
 import MapModal from "./MapModal"
 
+const defaultPeriod = { minYear: 1920, maxYear: 2019 }
+
 function USMap() {
 	const [selectState, setSelectState] = useState("Select State")
-	const [selectDate, setSelectDate] = useState({ year: 2019, month: 2 })
+	const [selectPeriod, setSelectPeriod] = useState(defaultPeriod)
 	const [progress, setProgress] = useState("")
 	const [modalOpen, setModalOpen] = useState(false)
 	const [modalData, setModalData] = useState({})
 	const [county, setCounty] = useState("")
 
 	const stateChangeHandler = value => {
+		if (value === "ALL") {
+			setSelectPeriod(defaultPeriod)
+		}
 		if (value.includes("-")) {
-			const [year, month] = value.split("-")
-			setSelectDate({ year: +year, month: +month })
+			const [minYear, maxYear] = value.split("-")
+			setSelectPeriod({
+				minYear: +minYear.trim(),
+				maxYear: +maxYear.trim(),
+			})
 		} else {
 			setSelectState(value)
 		}
@@ -43,7 +51,7 @@ function USMap() {
 				const mapData = await fetch(
 					"https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json",
 				).then(res => res.json())
-					console.log(mapData)
+				console.log(mapData)
 				renderData = topojson.feature(
 					mapData,
 					mapData.objects.counties,
@@ -73,10 +81,10 @@ function USMap() {
 				).features
 			}
 
-			let filter_SNAP_data
+			let spcimen_data
 
 			if (progress === "") {
-				filter_SNAP_data = SNAP_data.filter(
+				spcimen_data = SNAP_data.filter(
 					data =>
 						data.Year === selectDate.year &&
 						data.Month === selectDate.month,
@@ -85,12 +93,12 @@ function USMap() {
 
 			if (progress !== "") {
 				const [curYear, curMonth] = progress.split("-")
-				filter_SNAP_data = SNAP_data.filter(
+				spcimen_data = SNAP_data.filter(
 					data => data.Year === +curYear && data.Month === +curMonth,
 				)
 			}
 
-			// console.log(filter_SNAP_data)
+			// console.log(spcimen_data)
 
 			// console.log(SNAP_data)
 
@@ -144,12 +152,12 @@ function USMap() {
 				.on("click", handleMouseClick)
 
 			function handleCountyColor(d) {
-				for (let i = 0; i < filter_SNAP_data.length; i++) {
+				for (let i = 0; i < spcimen_data.length; i++) {
 					if (
-						d.id === +filter_SNAP_data[i].fipsValue ||
-						+d?.properties.GEOID === +filter_SNAP_data[i].fipsValue
+						d.id === +spcimen_data[i].fipsValue ||
+						+d?.properties.GEOID === +spcimen_data[i].fipsValue
 					) {
-						return filter_SNAP_data[i].Flag
+						return spcimen_data[i].Flag
 					}
 				}
 				return "Grey"
@@ -161,15 +169,14 @@ function USMap() {
 				setModalData(newData)
 			}
 
-			function getCountyName(id){
-				return 
+			function getCountyName(id) {
+				return
 			}
 
 			function handleMouseClick(d, event) {
 				console.log(d)
-				console.log('event', event)
-				if(!event.properties.NAME){
-
+				console.log("event", event)
+				if (!event.properties.NAME) {
 				}
 				setCounty(event.properties.NAME)
 				filterCactusData(event.properties.NAME)
@@ -253,13 +260,12 @@ function USMap() {
 				// 	}
 				// }
 
-				const node = filter_SNAP_data.find(
-					data => +data.fipsValue === x,
-				)
-
+				const node = spcimen_data.find(data => +data.fipsValue === x)
 
 				if (!node) return "No Data Available"
-				const cactiData = merged_data.filter(d => d.county === (node.County).replace(" County", ""))
+				const cactiData = merged_data.filter(
+					d => d.county === node.County.replace(" County", ""),
+				)
 				console.log(Object.entries(cactiData))
 				return `${node.County.substring(0, node.County.length - 7)}, ${
 					node.State === "California" ? "CA" : "TX"
@@ -344,13 +350,13 @@ function USMap() {
 			// legend.append("g").call(xAxis)
 		}
 		render()
-	}, [selectState, selectDate, progress])
+	}, [selectState, selectPeriod, progress])
 
 	return (
-		<div id="container">
-			<h1 id="title">United States Specimen Distribution Dashboard</h1>
-			<div id="description">
-				Plant Specimen collected by SEINet Dataset (1960-2020)
+		<div id='container'>
+			<h1 id='title'>United States Specimen Distribution Dashboard</h1>
+			<div id='description'>
+				Plant Specimen collected by SEINet Dataset (1920-2019)
 			</div>
 			<div style={{ display: "flex", justifyContent: "space-between" }}>
 				<ProgressBar
@@ -361,26 +367,38 @@ function USMap() {
 
 				<div className={styles.filterRoot}>
 					<Filter
-						title={"Pick a Month"}
-						datas={{ min: "2019-02", max: "2021-12" }}
-						id="month"
+						title={"Select Time Period"}
+						datas={[
+							"ALL",
+							"1920 - 1940",
+							"1941 - 1960",
+							"1961 - 1980",
+							"1981 - 2000",
+							"2001 - 2019",
+						]}
+						id='state'
 						stateChange={stateChangeHandler}
 						className={styles.filter}
-						type="month"
+						type='select'
 					/>
 
 					<Filter
 						title={"Select State"}
-						datas={["United States", "California", "Texas", "Arizona"]}
-						id="state"
+						datas={[
+							"United States",
+							"California",
+							"Texas",
+							"Arizona",
+						]}
+						id='state'
 						stateChange={stateChangeHandler}
 						className={styles.filter}
-						type="select"
+						type='select'
 					/>
 				</div>
 			</div>
-			<div id="theChart"></div>
-			<div id="theLegend"></div>
+			<div id='theChart'></div>
+			<div id='theLegend'></div>
 			<div>
 				{modalOpen && (
 					<MapModal
