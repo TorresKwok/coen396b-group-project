@@ -6,7 +6,7 @@ import Filter from "./filter"
 import ca_data from "../data/CA.json"
 import tx_data from "../data/TX.json"
 import az_data from "../data/AZ.json"
-import SNAP_data from "../data/SNAP.json"
+import state_id from "../data/US_stateid.json"
 import merged_data from "../data/merged_data.json"
 
 import styles from "./styles.module.css"
@@ -25,8 +25,7 @@ function USMap() {
 	const stateChangeHandler = value => {
 		if (value === "ALL") {
 			setSelectPeriod(defaultPeriod)
-		}
-		if (value.includes("-")) {
+		} else if (value.includes("-")) {
 			const [minYear, maxYear] = value.split("-")
 			setSelectPeriod({
 				minYear: +minYear.trim(),
@@ -58,7 +57,7 @@ function USMap() {
 				).features
 			}
 
-			console.log(renderData)
+			// console.log(renderData)
 
 			if (selectState === "California") {
 				renderData = topojson.feature(
@@ -83,20 +82,28 @@ function USMap() {
 
 			let spcimen_data
 
+			// console.log(merged_data)
+
 			if (progress === "") {
-				spcimen_data = SNAP_data.filter(
-					data =>
-						data.Year === selectDate.year &&
-						data.Month === selectDate.month,
-				)
+				spcimen_data = merged_data.filter(data => {
+					if (!data.year || data.year < 1920 || data.year > 2019)
+						return false
+
+					return (
+						data.year >= selectPeriod.minYear &&
+						data.year <= selectPeriod.maxYear
+					)
+				})
 			}
 
-			if (progress !== "") {
-				const [curYear, curMonth] = progress.split("-")
-				spcimen_data = SNAP_data.filter(
-					data => data.Year === +curYear && data.Month === +curMonth,
-				)
-			}
+			// if (progress !== "") {
+			// 	const [curYear, curMonth] = progress.split("-")
+			// 	spcimen_data = SNAP_data.filter(
+			// 		data => data.Year === +curYear && data.Month === +curMonth,
+			// 	)
+			// }
+
+			console.log(spcimen_data)
 
 			// console.log(spcimen_data)
 
@@ -164,7 +171,7 @@ function USMap() {
 			}
 
 			function filterCactusData(county) {
-				let newData = merged_data.filter(d => d.county === county)
+				let newData = spcimen_data.filter(d => d.county === county)
 				console.log(newData)
 				setModalData(newData)
 			}
@@ -230,6 +237,7 @@ function USMap() {
 				.attr("id", "tooltip")
 
 			function handleMouseOver(event, d) {
+				console.log(d)
 				d3.select(this).attr("stroke", "black")
 				tooltip
 					.style("visibility", "visible")
@@ -353,9 +361,9 @@ function USMap() {
 	}, [selectState, selectPeriod, progress])
 
 	return (
-		<div id='container'>
-			<h1 id='title'>United States Specimen Distribution Dashboard</h1>
-			<div id='description'>
+		<div id="container">
+			<h1 id="title">United States Specimen Distribution Dashboard</h1>
+			<div id="description">
 				Plant Specimen collected by SEINet Dataset (1920-2019)
 			</div>
 			<div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -376,10 +384,10 @@ function USMap() {
 							"1981 - 2000",
 							"2001 - 2019",
 						]}
-						id='state'
+						id="state"
 						stateChange={stateChangeHandler}
 						className={styles.filter}
-						type='select'
+						type="select"
 					/>
 
 					<Filter
@@ -390,15 +398,15 @@ function USMap() {
 							"Texas",
 							"Arizona",
 						]}
-						id='state'
+						id="state"
 						stateChange={stateChangeHandler}
 						className={styles.filter}
-						type='select'
+						type="select"
 					/>
 				</div>
 			</div>
-			<div id='theChart'></div>
-			<div id='theLegend'></div>
+			<div id="theChart"></div>
+			<div id="theLegend"></div>
 			<div>
 				{modalOpen && (
 					<MapModal
