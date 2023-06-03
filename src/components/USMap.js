@@ -6,8 +6,8 @@ import Filter from "./filter"
 import ca_data from "../data/CA.json"
 import tx_data from "../data/TX.json"
 import az_data from "../data/AZ.json"
-import state_id from "../data/US_stateid.json"
-import merged_data from "../data/merged_data.json"
+import co_data from "../data/CO.json"
+import merged_data from "../data/csvjson.json"
 
 import styles from "./styles.module.css"
 import MapModal from "./MapModal"
@@ -80,6 +80,13 @@ function USMap() {
 				).features
 			}
 
+			if (selectState === "Colorado") {
+				renderData = topojson.feature(
+					co_data,
+					co_data.objects.cb_2015_colorado_county_20m,
+				).features
+			}
+
 			let spcimen_data
 
 			// console.log(merged_data)
@@ -104,25 +111,6 @@ function USMap() {
 			// }
 
 			console.log(spcimen_data)
-
-			// console.log(spcimen_data)
-
-			// console.log(SNAP_data)
-
-			// console.log(renderData)
-
-			// if (progress !== "") {
-
-			// }
-
-			// if (selectYear !== "Select Year") {
-			// 	eduData.forEach(edu => {
-			// 		edu.bachelorsOrHigher = (
-			// 			edu.bachelorsOrHigher *
-			// 			(+selectYear - 2017)
-			// 		).toFixed(2)
-			// 	})
-			// }
 
 			const w = 1200
 			const h = 600
@@ -159,13 +147,17 @@ function USMap() {
 				.on("click", handleMouseClick)
 
 			function handleCountyColor(d) {
-				for (let i = 0; i < spcimen_data.length; i++) {
-					if (
-						d.id === +spcimen_data[i].fipsValue ||
-						+d?.properties.GEOID === +spcimen_data[i].fipsValue
-					) {
-						return spcimen_data[i].Flag
-					}
+				const cnt = spcimen_data.filter(
+					data =>
+						+data.fips === d.id ||
+						+data.fips === +d.properties.GEOID,
+				).length
+				if (cnt > 500) {
+					return "Red"
+				} else if (cnt > 200) {
+					return "Yellow"
+				} else if (cnt > 0) {
+					return "Green"
 				}
 				return "Grey"
 			}
@@ -190,37 +182,6 @@ function USMap() {
 				setModalOpen(true)
 			}
 
-			// function handleGetBachelors(d) {
-			// 	for (let i = 0; i < eduData.length; i++) {
-			// 		if (
-			// 			d.id === eduData[i].fips ||
-			// 			eduData[i].area_name.startsWith(d?.properties.NAME)
-			// 		) {
-			// 			return handleGetColor(eduData[i].bachelorsOrHigher)
-			// 		}
-			// 	}
-			// }
-
-			// function handleGetColor(x) {
-			// 	if (x <= 12) {
-			// 		return "color-01"
-			// 	} else if (x > 12 && x <= 21) {
-			// 		return "color-02"
-			// 	} else if (x > 21 && x <= 30) {
-			// 		return "color-03"
-			// 	} else if (x > 30 && x <= 39) {
-			// 		return "color-04"
-			// 	} else if (x > 39 && x <= 48) {
-			// 		return "color-05"
-			// 	} else if (x > 48 && x <= 57) {
-			// 		return "color-06"
-			// 	} else if (x > 57) {
-			// 		return "color-07"
-			// 	} else {
-			// 		return "color-error"
-			// 	}
-			// }
-
 			var tooltip = d3
 				.select("#theChart")
 				.append("div")
@@ -237,7 +198,6 @@ function USMap() {
 				.attr("id", "tooltip")
 
 			function handleMouseOver(event, d) {
-				console.log(d)
 				d3.select(this).attr("stroke", "black")
 				tooltip
 					.style("visibility", "visible")
@@ -251,33 +211,10 @@ function USMap() {
 			}
 
 			function handleGetLocation(x) {
-				// console.log(x)
-				// for (let i = 0; i < eduData.length; i++) {
-				// 	if (
-				// 		x === eduData[i].fips ||
-				// 		eduData[i].area_name.startsWith(x)
-				// 	) {
-				// 		return (
-				// 			eduData[i].area_name +
-				// 			", " +
-				// 			eduData[i].state +
-				// 			": " +
-				// 			eduData[i].bachelorsOrHigher +
-				// 			"%"
-				// 		)
-				// 	}
-				// }
+				const cactiData = spcimen_data.filter(data => +data.fips === x)
 
-				const node = spcimen_data.find(data => +data.fipsValue === x)
-
-				if (!node) return "No Data Available"
-				const cactiData = merged_data.filter(
-					d => d.county === node.County.replace(" County", ""),
-				)
-				console.log(Object.entries(cactiData))
-				return `${node.County.substring(0, node.County.length - 7)}, ${
-					node.State === "California" ? "CA" : "TX"
-				}<br>Samples: ${Object.entries(cactiData).length}`
+				if (!cactiData.length) return "No Data Available"
+				return `${cactiData[0].county}, ${cactiData[0].stateProvince}<br>Samples: ${cactiData.length}`
 			}
 
 			function handleMouseOut(event, d) {
@@ -287,9 +224,6 @@ function USMap() {
 
 			// Begin legend stuff
 
-			// const legW = w / 5
-			// const legH = 20
-			// const legendColors = [12, 21, 30, 39, 48, 57, 66]
 			const texts = [
 				{ text: "Type 1", color: "Red" },
 				{ text: "Type 2", color: "YellowTitle" },
@@ -328,34 +262,6 @@ function USMap() {
 				.attr("text-anchor", "left")
 				.style("alignment-baseline", "middle")
 				.style("font-size", "16px")
-
-			// console.log(legend)
-
-			// let xScale = d3.scaleLinear().domain([0, 70]).range([0, legW])
-
-			// let xAxis = d3
-			// 	.axisBottom()
-			// 	.scale(xScale)
-			// 	.ticks(7)
-			// 	.tickSize(30)
-			// 	.tickFormat(
-			// 		(d, i) =>
-			// 			["3%", "12%", "21%", "30%", "39%", "48%", "57%", "66%"][
-			// 				i
-			// 			],
-			// 	)
-
-			// legend
-			// 	.selectAll("rect")
-			// 	.data(legendColors)
-			// 	.enter()
-			// 	.append("rect")
-			// 	.attr("width", legW / legendColors.length)
-			// 	.attr("height", legH)
-			// 	.attr("x", (d, i) => i * (legW / legendColors.length))
-			// 	.attr("class", d => handleGetColor(d))
-
-			// legend.append("g").call(xAxis)
 		}
 		render()
 	}, [selectState, selectPeriod, progress])
@@ -397,6 +303,7 @@ function USMap() {
 							"California",
 							"Texas",
 							"Arizona",
+							"Colorado",
 						]}
 						id="state"
 						stateChange={stateChangeHandler}
