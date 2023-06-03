@@ -37,7 +37,7 @@ function ProgressBar(props) {
 				progressChange(scale.current[prev + 1])
 				return prev + 1
 			})
-		}, 300)
+		}, 1000)
 
 		return () => {
 			clearTimeout(timer)

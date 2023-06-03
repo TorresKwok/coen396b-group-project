@@ -50,7 +50,6 @@ function USMap() {
 				const mapData = await fetch(
 					"https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json",
 				).then(res => res.json())
-				console.log(mapData)
 				renderData = topojson.feature(
 					mapData,
 					mapData.objects.counties,
@@ -154,9 +153,9 @@ function USMap() {
 						+data.fips === d.id ||
 						+data.fips === +d.properties.GEOID,
 				).length
-				if (cnt > 500) {
+				if (cnt > 100) {
 					return "Red"
-				} else if (cnt > 200) {
+				} else if (cnt > 20) {
 					return "Yellow"
 				} else if (cnt > 0) {
 					return "Green"
@@ -227,9 +226,9 @@ function USMap() {
 			// Begin legend stuff
 
 			const texts = [
-				{ text: "Type 1", color: "Red" },
-				{ text: "Type 2", color: "YellowTitle" },
-				{ text: "Type 3", color: "GreenTitle" },
+				{ text: "Sample > 100", color: "Red" },
+				{ text: "Sample > 20", color: "YellowTitle" },
+				{ text: "Sample > 0", color: "GreenTitle" },
 				{ text: "No data available", color: "GreyTitle" },
 			]
 
