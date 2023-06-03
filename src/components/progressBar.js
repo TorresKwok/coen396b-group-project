@@ -14,20 +14,15 @@ function ProgressBar(props) {
 	useEffect(() => {
 		if (scale.current.length > 0) return
 
-		const [minYear, minMonth] = min.split("-")
-		const [maxYear, maxMonth] = max.split("-")
+		const minYear = +min.slice(0, -1)
+		const maxYear = +max.slice(0, -1)
 
-		let curMonth = +minMonth,
-			curYear = +minYear
+		let curYear = minYear
 
-		while (curYear <= +maxYear) {
-			scale.current.push(`${curYear}-${curMonth}`)
-			if (curYear === +maxYear && curMonth === +maxMonth) break
-			if (curMonth === 12) {
-				curMonth = 0
-				curYear += 1
-			}
-			curMonth += 1
+		while (curYear <= maxYear) {
+			scale.current.push(`${curYear}s`)
+			if (curYear > maxYear) break
+			curYear += 10
 		}
 	}, [min, max, scale])
 

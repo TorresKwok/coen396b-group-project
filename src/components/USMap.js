@@ -103,14 +103,16 @@ function USMap() {
 				})
 			}
 
-			// if (progress !== "") {
-			// 	const [curYear, curMonth] = progress.split("-")
-			// 	spcimen_data = SNAP_data.filter(
-			// 		data => data.Year === +curYear && data.Month === +curMonth,
-			// 	)
-			// }
+			if (progress !== "") {
+				console.log(progress)
+				const curMinYear = +progress.slice(0, -1)
+				const curMaxYear = curMinYear + 9
+				spcimen_data = merged_data.filter(
+					data => data.year >= curMinYear && data.year <= curMaxYear,
+				)
+			}
 
-			console.log(spcimen_data)
+			// console.log(spcimen_data)
 
 			const w = 1200
 			const h = 600
@@ -275,8 +277,8 @@ function USMap() {
 			<div style={{ display: "flex", justifyContent: "space-between" }}>
 				<ProgressBar
 					progressChange={progressChangeHandler}
-					min={"2019-02"}
-					max={"2021-12"}
+					min={"1920s"}
+					max={"2010s"}
 				/>
 
 				<div className={styles.filterRoot}>
