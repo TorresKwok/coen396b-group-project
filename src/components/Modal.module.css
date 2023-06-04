@@ -132,3 +132,65 @@
     transform: translateY(-5px);
     box-shadow: 0 10px 20px -10px rgba(24, 90, 219, 0.6);
 }
+
+.backBtn {
+    cursor: pointer;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: none;
+    font-size: 18px;
+    color: #2c3e50;
+    background: rgb(229, 229, 229);
+    transition: all 0.25s ease;
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.06);
+    position: absolute;
+    left: 0;
+    top: 0;
+    align-self: flex-start;
+    margin-top: -7px;
+    margin-left: -7px;
+}
+
+.backBtn:hover {
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
+    transform: translate(-4px, 4px);
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: medium;
+    text-decoration: underline;
+}
+
+.itemDetails {
+    display: flex;
+}
+
+.additionalInfo {
+    text-align: left;
+    flex: 1;
+}
+
+.imageContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.recordedBy {
+    margin-top: 10px;
+}
