@@ -170,13 +170,18 @@ function USMap() {
 			}
 
 			function getCountyName(id) {
-				return
+				const cactiData = spcimen_data.filter(data => +data.fips === id)
+				if (cactiData.length > 0) {
+					return cactiData[0].county
+				}
+				return "No Data Available"
 			}
 
 			function handleMouseClick(d, event) {
 				console.log(d)
 				console.log("event", event)
 				if (!event.properties.NAME) {
+					event.properties.NAME = getCountyName(event.id)
 				}
 				setCounty(event.properties.NAME)
 				filterCactusData(event.properties.NAME)
