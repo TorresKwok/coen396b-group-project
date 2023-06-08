@@ -1,65 +1,46 @@
 import React from 'react'
-import { useState } from 'react'
+import merged_data from "../data/csvjson.json"
+import WordCloud from '../components/wordCloud'
 import './CactiSelectPage.css'
 
 export default function CactiSelectPage() {
-    const [location, setLocation] = useState('');
-    const [portable, setPortable] = useState(false);
-    const [flowering, setFlowering] = useState(false);
-    const handleLocationChange = (e) => {
-        setLocation(e.target.value);
-    };
+    
+    //get all the different elevations out of the data
+    let elevations = []
+    merged_data.forEach(element => {
+        if (!elevations.includes(element.verbatimElevation)) {
+            elevations.push(element.verbatimElevation)
+        }
+    });
 
-    const handlePortableChange = (e) => {
-        setPortable(e.target.checked);
-    };
+    let newData = merged_data.filter(element => element.verbatimElevation >= '2000 ft' && element.stateProvince === 'Arizona')
 
-    const handleOtherFieldChange = (e) => {
-        setFlowering(e.target.value);
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Perform further actions with the submitted data
-        console.log('Submitted location:', location);
-        console.log('Portable:', portable);
-        console.log('Other field:', flowering);
-    };
+    //need to extract order and family from the elements and add to an object that will have the count of each
+    let words = []
+    newData.forEach(element => {
+        if (element.order !== undefined && element.family !== undefined) {
+            let order = element.order
+            let family = element.family
+            let orderFamily = order + ' ' + family
+            let found = false
+            words.forEach(word => {
+                if (word.text === orderFamily) {
+                    word.size += 1
+                    found = true
+                }
+            })
+            if (!found) {
+                words.push({text: orderFamily, size: 1})
+            }
+        }
+    });
+    console.log(words)
 
     return (
         <div className='container'>
             <h2>Select Cacti Preferences</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="location">Location:</label>
-                    <input
-                        type="text"
-                        id="location"
-                        value={location}
-                        onChange={handleLocationChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="portable">Potable Cacti:</label>
-                    <input
-                        type="checkbox"
-                        id="potable"
-                        checked={portable}
-                        onChange={handlePortableChange}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="otherField">Flowering:</label>
-                    <input
-                        type="checkbox"
-                        id="flowering"
-                        value={flowering}
-                        onChange={handleOtherFieldChange}
-                    />
-                </div>
-                <button type="submit" className='submitButton' >Submit</button>
-            </form>
+            {/* <ReactWordcloud words={words} /> */}
+            <WordCloud words={words} />
         </div>
     )
 }

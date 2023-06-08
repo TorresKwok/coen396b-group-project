@@ -40,8 +40,6 @@ function USMap() {
 		setProgress(curProgress)
 	}
 
-	console.log(merged_data.length)
-
 	useEffect(() => {
 		async function render() {
 			let renderData
