@@ -13,7 +13,7 @@ function App() {
 							<Link to="/">Home</Link>
 						</li>
 						<li>
-							<Link to="/cacti">Cacti at Home</Link>
+							<Link to="/wordCloud">Word Clouds</Link>
 						</li>
 					</ul>
 				</nav>
@@ -23,7 +23,7 @@ function App() {
 						element={
 							<USMapPage />
 						} />
-					<Route path="/cacti" element={<CactiSelectPage />} />
+					<Route path="/wordCloud" element={<CactiSelectPage />} />
 				</Routes>
 			</div>
 		</Router>

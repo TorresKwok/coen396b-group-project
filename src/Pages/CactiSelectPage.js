@@ -39,8 +39,7 @@ export default function CactiSelectPage() {
     return (
         <div className='container'>
             <h2>Select Cacti Preferences</h2>
-            {/* <ReactWordcloud words={words} /> */}
-            <WordCloud words={words} />
+            {words.length > 0 ? <WordCloud words={words} /> : null}
         </div>
     )
 }
