@@ -6,6 +6,7 @@ const WordCloud = ({ words }) => {
   const cloudRef = useRef(null);
 
   useLayoutEffect(() => {
+    d3.select(cloudRef.current).select('svg').remove();
     if (words.length > 0 && cloudRef.current) {
       const width = cloudRef.current.offsetWidth;
       const height = cloudRef.current.offsetHeight;
