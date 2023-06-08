@@ -15,7 +15,7 @@ const WordCloud = ({ words }) => {
         .size([width, height])
         .words(words)
         .padding(5)
-        .rotate(() => Math.random() < 0.5 ? 0 : 90)
+        .rotate(0)
         .fontSize(d => d.size)
         .on('end', draw);
 
@@ -41,7 +41,7 @@ const WordCloud = ({ words }) => {
     }
   }, [words]);
 
-  return <div ref={cloudRef} style={{ width: '500px', height: '500px' }} />;
+  return <div ref={cloudRef} style={{ width: '800px', height: '550px' }} />;
 };
 
 export default WordCloud;

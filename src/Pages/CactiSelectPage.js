@@ -1,33 +1,50 @@
 import React, { useLayoutEffect, useState } from 'react'
-import merged_data from "../data/csvjson.json"
+import merged_data from "../data/new_file.json"
 import WordCloud from '../components/wordCloud'
 import './CactiSelectPage.css'
 
 export default function CactiSelectPage() {
     //states
+    const [orignalData, setOriginalData] = useState(merged_data)
     const [words, setWords] = useState([])
-    const [elevation, setElevation] = useState('2000 ft')
+    const [elevation, setElevation] = useState('2000ft')
     const [state, setState] = useState('Arizona')
     const [temperature, setTemperature] = useState('35')
     const [cactiData, setCactiData] = useState([])
 
 
+    //functions
+    const handleElevationChange = (e) => {
+        console.log(e)
+        setElevation(e.target.value)
+    }
+    const handleStateChange = (e) => {
+        console.log(e.target.value)
+        setState(e.target.value)
+    }
+    const handleTemperatureChange = (e) => {
+        console.log(e.target.value)
+        setTemperature(e.target.value)
+    }
+
     function filterData() {
-        let newData = merged_data.filter(element => element.verbatimElevation >= elevation && element.stateProvince === state
-            // && element.averageTemp >= temperature
+        let tempData = orignalData
+        let newData = tempData.filter(element => element.verbatimElevation >= elevation && element.stateProvince === state
+            && element.averageTemperature >= temperature
         )
         setCactiData(newData)
         getWords(newData)
     }
 
-    //this was for testing purposes
-    // //get all the different elevations out of the data
-    // let elevations = []
-    // merged_data.forEach(element => {
-    //     if (!elevations.includes(element.verbatimElevation)) {
-    //         elevations.push(element.verbatimElevation)
-    //     }
-    // });
+    // this was for testing purposes
+    //get all the different elevations out of the data
+    let elevations = []
+    merged_data.forEach(element => {
+        if (!elevations.includes(element.verbatimElevation)) {
+            elevations.push(element.verbatimElevation)
+        }
+    });
+    console.log(elevations)
 
     function getWords(data) {
         let tempWords = []
@@ -65,18 +82,20 @@ export default function CactiSelectPage() {
             <div className='container'>
                 <h2>Select Cacti Preferences</h2>
                 <div className='selectors'>
-                    <select name='elevation'>
-                        <option value=''>Above 1000ft</option>
-                        <option value=''>Above 2000ft</option>
-                        <option value=''>Above 3000ft</option>
-                        <option value=''>Above 4000ft</option>
+                    <select name='elevation' onChange={handleElevationChange}>
+                        <option value='1000 ft'>Above 1000ft</option>
+                        <option value='2000 ft'>Above 2000ft</option>
+                        <option value='3000 ft'>Above 3000ft</option>
+                        <option value='4000ft'>Above 4000ft</option>
                     </select>
-                    <select name='state'>
-                        <option value=''>Arizona</option>
-                        <option value=''>California</option>
-                        <option value=''>Texas</option>
+                    <select name='state' onChange={handleStateChange}>
+                        <option value='Arizona'>Arizona</option>
+                        <option value='Califronia'>California</option>
+                        <option value='Texas'>Texas</option>
+                        <option value='Colorado'>Colorado</option>
+                        <option value='New Mexico'>New Mexico</option>
                     </select>
-                    <select name='temperature'>
+                    <select name='temperature' onChange={handleTemperatureChange}>
                         <option value='35'>Above 35 F</option>
                         <option value='40'>Above 40 F</option>
                         <option value='50'>Above 50 F</option>
