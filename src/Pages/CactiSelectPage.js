@@ -29,7 +29,7 @@ export default function CactiSelectPage() {
 
     function filterData() {
         let tempData = orignalData
-        let newData = tempData.filter(element => element.verbatimElevation >= elevation && element.stateProvince === state
+        let newData = tempData.filter(element => element.verbatimElevation >= (elevation || null) && element.stateProvince === state
             && element.averageTemperature >= temperature
         )
         setCactiData(newData)
@@ -83,14 +83,15 @@ export default function CactiSelectPage() {
                 <h2>Select Cacti Preferences</h2>
                 <div className='selectors'>
                     <select name='elevation' onChange={handleElevationChange}>
-                        <option value='1000 ft'>Above 1000ft</option>
-                        <option value='2000 ft'>Above 2000ft</option>
-                        <option value='3000 ft'>Above 3000ft</option>
-                        <option value='4000ft'>Above 4000ft</option>
+                        <option value='0'>Above 0ft</option>
+                        <option value='1000'>Above 1000ft</option>
+                        <option value='2000'>Above 2000ft</option>
+                        <option value='3000'>Above 3000ft</option>
+                        <option value='4000'>Above 4000ft</option>
                     </select>
                     <select name='state' onChange={handleStateChange}>
                         <option value='Arizona'>Arizona</option>
-                        <option value='Califronia'>California</option>
+                        <option value='California'>California</option>
                         <option value='Texas'>Texas</option>
                         <option value='Colorado'>Colorado</option>
                         <option value='New Mexico'>New Mexico</option>

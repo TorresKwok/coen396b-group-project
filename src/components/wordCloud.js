@@ -16,7 +16,7 @@ const WordCloud = ({ words }) => {
         .words(words)
         .padding(5)
         .rotate(0)
-        .fontSize(d => d.size)
+        .fontSize(d => Math.sqrt(d.size) * 10)
         .on('end', draw);
 
       layout.start();
